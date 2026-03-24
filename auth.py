@@ -7,10 +7,11 @@ from database import get_session
 from models.users import Users
 from models.auth import BlacklistedToken, AccessRule, BusinessElement
 from fastapi.security import APIKeyHeader
+import os
 
-SECRET_KEY = "meowmeowmeow"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+SECRET_KEY = os.getenv("SECRET_KEY")
+ALGORITHM = os.getenv("ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 
 api_key_scheme = APIKeyHeader(name="Authorization", auto_error=False)
 

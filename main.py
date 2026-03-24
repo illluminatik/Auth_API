@@ -7,7 +7,6 @@ from routers.admin import router as admin_router
 from models.users import Role
 from models.auth import BusinessElement, AccessRule
 from sqlalchemy import select
-import math
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
