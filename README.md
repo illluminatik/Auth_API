@@ -1,29 +1,77 @@
 # Auth API
 
-API для авторизации пользователей с ролями и правами доступа.
+REST API для аутентификации и авторизации пользователей с системой ролей и прав доступа.
 
-## Запуск
+## Технологии
 
+- **FastAPI** — веб-фреймворк
+- **PostgreSQL** — база данных
+- **SQLAlchemy** (async) — ORM
+- **JWT** — аутентификация
+- **Docker / Docker Compose** — контейнеризация
+- **Bcrypt** — хеширование паролей
+
+## Возможности
+
+- Регистрация и вход пользователей
+- JWT-токены + блэклист (logout)
+- Система ролей: `admin` и `user`
+- Права доступа к бизнес-элементам (products, orders)
+- Назначение ролей администратором
+
+## Запуск через Docker
+
+1. Клонировать репозиторий:
+```bash
+git clone https://github.com/illluminatik/Auth_API.git
+cd Auth_API
 ```
-pip install fastapi uvicorn sqlalchemy asyncpg python-jose bcrypt pydantic[email]
-uvicorn main:app --reload
+
+2. Создать `.env` файл (пример в `.env.example`):
+```env
+SECRET_KEY=your_secret_key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+DATABASE_URL=postgresql+asyncpg://postgres:1234@db:5432/auth_db
 ```
 
-Swagger: http://localhost:8000/docs
+3. Запустить:
+```bash
+docker-compose up --build
+```
 
-Перед запуском настрой БД в database.py
+4. Открыть Swagger документацию: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-## Как работает
+## Эндпоинты
 
-Есть роли admin и user. Есть бизнес-элементы (products, orders). Для каждой пары роль+элемент задаются права (чтение, создание и тд).
+### Пользователи
+| Метод | URL | Описание |
+|-------|-----|----------|
+| POST | `/users/register` | Регистрация |
+| POST | `/users/login` | Вход, получение токена |
+| POST | `/users/logout` | Выход, токен в блэклист |
+| GET | `/users/me` | Текущий пользователь |
 
-После регистрации у пользователя нет ролей, надо назначить через /users/assign-role.
+### Бизнес-элементы
+| Метод | URL | Описание |
+|-------|-----|----------|
+| GET | `/products` | Список товаров |
+| GET | `/orders` | Список заказов |
 
-## Таблицы
+### Админ
+| Метод | URL | Описание |
+|-------|-----|----------|
+| POST | `/users/assign-role` | Назначить роль пользователю |
 
-- users
-- roles
-- user_role
-- blacklisted_tokens
-- business_elements
-- access_rules
+## Структура проекта
+```
+├── main.py           # Точка входа
+├── auth.py           # JWT логика
+├── database.py       # Подключение к БД
+├── models/           # Модели SQLAlchemy
+├── routers/          # Роуты (users, business, admin)
+├── schemas/          # Pydantic схемы
+├── Dockerfile
+├── docker-compose.yml
+└── requirements.txt
+```
